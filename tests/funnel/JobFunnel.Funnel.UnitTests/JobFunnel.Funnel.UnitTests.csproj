@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- No Opportunity tests exist until the aggregate does; drop this once the first one lands. -->
+    <TestingPlatformCommandLineArguments>$(TestingPlatformCommandLineArguments) --ignore-exit-code 8</TestingPlatformCommandLineArguments>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\src\funnel\JobFunnel.Funnel.Domain\JobFunnel.Funnel.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

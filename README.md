@@ -12,6 +12,18 @@ It has one real user and a public, read-only demonstration mode with fictitious 
 - [Decisions](./docs/adr/): why the system is built this way
 - [Roadmap](./docs/roadmap.md): the order in which it is built
 
+## Running locally
+
+Requires the .NET 10 SDK. The service-boundary tests use Docker through Testcontainers once they touch a data store.
+
+```sh
+dotnet build
+dotnet test
+dotnet run --project src/funnel/JobFunnel.Funnel.Api
+```
+
+Funnel answers `/health/live` and `/health/ready`.
+
 ## Status
 
-Design complete; implementation has not started. See the [roadmap](./docs/roadmap.md).
+Phase 1 has started: the Funnel walking skeleton and its CI are in place. See the [roadmap](./docs/roadmap.md).

@@ -1,0 +1,15 @@
+<Solution>
+  <Folder Name="/src/" />
+  <Folder Name="/src/funnel/">
+    <Project Path="src/funnel/JobFunnel.Funnel.Api/JobFunnel.Funnel.Api.csproj" />
+    <Project Path="src/funnel/JobFunnel.Funnel.Application/JobFunnel.Funnel.Application.csproj" />
+    <Project Path="src/funnel/JobFunnel.Funnel.Domain/JobFunnel.Funnel.Domain.csproj" />
+    <Project Path="src/funnel/JobFunnel.Funnel.Infrastructure/JobFunnel.Funnel.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/" />
+  <Folder Name="/tests/funnel/">
+    <Project Path="tests/funnel/JobFunnel.Funnel.ArchitectureTests/JobFunnel.Funnel.ArchitectureTests.csproj" />
+    <Project Path="tests/funnel/JobFunnel.Funnel.ServiceTests/JobFunnel.Funnel.ServiceTests.csproj" />
+    <Project Path="tests/funnel/JobFunnel.Funnel.UnitTests/JobFunnel.Funnel.UnitTests.csproj" />
+  </Folder>
+</Solution>

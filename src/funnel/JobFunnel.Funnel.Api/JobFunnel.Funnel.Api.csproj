@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <ItemGroup>
+    <PackageReference Include="Serilog.AspNetCore" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\JobFunnel.Funnel.Infrastructure\JobFunnel.Funnel.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>
