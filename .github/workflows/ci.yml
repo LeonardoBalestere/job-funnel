@@ -10,17 +10,18 @@ permissions:
 
 concurrency:
   group: ci-${{ github.ref }}
-  cancel-in-progress: true
+  # A newer push supersedes a pull request's run; runs on main always finish, so every commit is analysed.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
 
 jobs:
   build-and-test:
     name: Build, style and tests
     runs-on: ubuntu-latest
     timeout-minutes: 20
-
-    env:
-      DOTNET_NOLOGO: true
-      DOTNET_CLI_TELEMETRY_OPTOUT: true
 
     steps:
       - uses: actions/checkout@v5
@@ -41,3 +42,60 @@ jobs:
 
       - name: Test
         run: dotnet test --no-build --configuration Release
+
+  # A separate job, because the SonarQube scanner turns off warnings-as-errors for the build it wraps.
+  quality-gate:
+    name: SonarQube Cloud
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    env:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      SONAR_ORGANIZATION: leonardobalestere
+      SONAR_PROJECT_KEY: LeonardoBalestere_job-funnel
+
+    steps:
+      - name: Require the SonarQube Cloud token
+        if: env.SONAR_TOKEN == ''
+        run: |
+          echo "::error::The SONAR_TOKEN secret is not set. See docs/quality-gate.md."
+          exit 1
+
+      - uses: actions/checkout@v5
+        with:
+          # Full history, so SonarQube Cloud can tell new code from old.
+          fetch-depth: 0
+
+      - uses: actions/setup-dotnet@v5
+        with:
+          global-json-file: global.json
+
+      - name: Restore
+        run: |
+          dotnet tool restore
+          dotnet restore
+
+      - name: Begin analysis
+        run: >
+          dotnet sonarscanner begin
+          /k:"$SONAR_PROJECT_KEY"
+          /o:"$SONAR_ORGANIZATION"
+          /d:sonar.host.url="https://sonarcloud.io"
+          /d:sonar.token="$SONAR_TOKEN"
+          /d:sonar.cs.opencover.reportsPaths="TestResults/coverage/*.opencover.*.xml"
+          /d:sonar.qualitygate.wait=true
+
+      - name: Build
+        run: dotnet build --no-restore --configuration Release
+
+      - name: Test with coverage
+        run: >
+          dotnet test --no-build --configuration Release
+          --results-directory TestResults/coverage
+          --coverlet
+          --coverlet-output-format opencover
+          --coverlet-include "[JobFunnel.*]*"
+
+      # Uploads the analysis and waits for the quality gate; this step fails when the gate fails.
+      - name: End analysis
+        run: dotnet sonarscanner end /d:sonar.token="$SONAR_TOKEN"
