@@ -4,9 +4,10 @@
 
 locals {
   # Tags the node's instance and interface, so the node role and the deploy role can be limited to them.
-  node_tag = {
-    JobFunnelRole = "node"
-  }
+  node_tag_key   = "JobFunnelRole"
+  node_tag_value = "node"
+  node_tag       = { (local.node_tag_key) = local.node_tag_value }
+  node_tags      = merge(local.node_tag, { Name = var.name, Project = var.name })
 
   node_user_data = templatefile("${path.module}/templates/node-start.sh.tftpl", {
     region        = var.region
@@ -88,12 +89,12 @@ resource "aws_launch_template" "node" {
 
   tag_specifications {
     resource_type = "instance"
-    tags          = merge(local.node_tag, { Name = var.name, Project = var.name })
+    tags          = local.node_tags
   }
 
   tag_specifications {
     resource_type = "network-interface"
-    tags          = merge(local.node_tag, { Name = var.name, Project = var.name })
+    tags          = local.node_tags
   }
 
   tag_specifications {
@@ -203,7 +204,7 @@ resource "aws_iam_role_policy" "node" {
         Effect    = "Allow"
         Action    = "ec2:AttachVolume"
         Resource  = "${local.ec2_arn_prefix}:instance/*"
-        Condition = { StringEquals = { "aws:ResourceTag/JobFunnelRole" = "node" } }
+        Condition = { StringEquals = { "aws:ResourceTag/${local.node_tag_key}" = local.node_tag_value } }
       },
       {
         Sid      = "AssociateTheFixedAddress"
@@ -219,7 +220,7 @@ resource "aws_iam_role_policy" "node" {
           "${local.ec2_arn_prefix}:instance/*",
           "${local.ec2_arn_prefix}:network-interface/*",
         ]
-        Condition = { StringEquals = { "aws:ResourceTag/JobFunnelRole" = "node" } }
+        Condition = { StringEquals = { "aws:ResourceTag/${local.node_tag_key}" = local.node_tag_value } }
       },
       {
         Sid      = "SignInToTheRegistry"

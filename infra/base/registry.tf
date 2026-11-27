@@ -1,4 +1,4 @@
-# One repository per process image. Tags are immutable, so the pipeline tags each image with its
+# One repository per service image. Tags are immutable, so the pipeline tags each image with its
 # commit and a deployment always names exactly what it runs.
 
 resource "aws_ecr_repository" "service" {

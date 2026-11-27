@@ -65,7 +65,7 @@ variable "api_hostname" {
 }
 
 variable "service_images" {
-  description = "One container image, and so one ECR repository, per process."
+  description = "One container image, and so one ECR repository, per service process: an API or a worker."
   type        = set(string)
   default     = ["catalog-api", "catalog-worker", "funnel-api", "dashboard-api"]
 }

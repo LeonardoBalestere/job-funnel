@@ -51,8 +51,8 @@ retry 30 aws ec2 associate-address --allocation-id "$ALLOCATION_ID" --instance-i
 # to release it.
 attach_data_volume() {
   local state attached_to
-  state=$(aws ec2 describe-volumes --volume-ids "$VOLUME_ID" --query 'Volumes[0].State' --output text) || return 1
-  attached_to=$(aws ec2 describe-volumes --volume-ids "$VOLUME_ID" --query 'Volumes[0].Attachments[0].InstanceId' --output text) || return 1
+  read -r state attached_to < <(aws ec2 describe-volumes --volume-ids "$VOLUME_ID" \
+    --query 'Volumes[0].[State, Attachments[0].InstanceId]' --output text) || return 1
 
   if [ "$attached_to" = "$INSTANCE_ID" ]; then
     return 0

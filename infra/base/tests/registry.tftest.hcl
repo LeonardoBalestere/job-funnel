@@ -36,8 +36,8 @@ run "every_repository_has_a_lifecycle_policy" {
     condition = alltrue([
       for p in aws_ecr_lifecycle_policy.service :
       [for rule in jsondecode(p.policy).rules : rule.selection.tagStatus] == ["untagged", "any"]
-      && jsondecode(p.policy).rules[1].selection.countNumber == 20
+      && jsondecode(p.policy).rules[1].selection.countNumber == var.image_retention_count
     ])
-    error_message = "Untagged images must expire first, then all but the most recent 20."
+    error_message = "Untagged images must expire first, then all but the most recent ones."
   }
 }

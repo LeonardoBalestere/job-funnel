@@ -16,7 +16,7 @@ The identity provider (Cognito, [ADR 0009](../docs/adr/0009-amazon-cognito-as-id
 - **Persistence.** An encrypted gp3 data volume and an elastic IP, both protected from `terraform destroy`. The start script ([`templates/node-start.sh.tftpl`](./base/templates/node-start.sh.tftpl)) of every new instance associates the address, waits for the volume to be released by the previous instance, attaches and mounts it at `/data`, and installs k3s with `--data-dir /data/k3s`. `/etc/rancher` is also kept on the volume, and the node always registers under the same name, so a replacement instance takes over the existing cluster rather than joining it as a new node.
 - **Registry.** One ECR repository per service image (`job-funnel/<image>`), immutable tags, scan on push, and a lifecycle policy that expires untagged images after a day and keeps the 20 most recent.
 - **DNS.** An `A` record for the API host in the owner's existing hosted zone, pointing at the elastic IP.
-- **Deploy role.** A GitHub OIDC identity provider and a role whose trust requires, by exact match, the audience `sts.amazonaws.com` and the subject `repo:LeonardoBalestere/job-funnel:ref:refs/heads/main`. The role can push to the service repositories and send `AWS-RunShellScript` to the instance tagged `JobFunnelRole=node`, and read that command's result. Nothing else.
+- **Deploy role.** A GitHub OIDC identity provider and a role whose trust requires, by exact match, the audience `sts.amazonaws.com` and the subject `repo:LeonardoBalestere/job-funnel:ref:refs/heads/main`. The role can push to the service repositories find the instance tagged `JobFunnelRole=node`, send it `AWS-RunShellScript`, and read that command's result. Nothing else.
 
 A change to the launch template, such as the start script or the k3s channel, replaces the instance through an instance refresh. With one node this means a few minutes of downtime, the same as a spot interruption.
 
@@ -34,7 +34,7 @@ The `Infrastructure` workflow runs `terraform fmt -check`, `validate` and `test`
 
 ## Owner setup
 
-Needs the AWS CLI, Terraform 1.10 or later, credentials for the AWS account with administrator rights, and a domain with a public hosted zone in Route 53. If the domain is registered elsewhere, create the hosted zone in Route 53 first and point the registrar's name servers at it.
+Needs the AWS CLI, Terraform 1.11 or later, credentials for the AWS account with administrator rights, and a domain with a public hosted zone in Route 53. If the domain is registered elsewhere, create the hosted zone in Route 53 first and point the registrar's name servers at it.
 
 ### 1. Bootstrap the state bucket (once)
 

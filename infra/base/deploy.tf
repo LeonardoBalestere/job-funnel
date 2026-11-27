@@ -34,7 +34,7 @@ resource "aws_iam_role" "deploy" {
   })
 }
 
-# The registry token and command results cannot be limited to a resource.
+# The registry token, instance lookup and command results cannot be limited to a resource.
 resource "aws_iam_role_policy" "deploy" {
   name = "push-images-and-deploy"
   role = aws_iam_role.deploy.id
@@ -72,7 +72,14 @@ resource "aws_iam_role_policy" "deploy" {
         Effect    = "Allow"
         Action    = "ssm:SendCommand"
         Resource  = "${local.ec2_arn_prefix}:instance/*"
-        Condition = { StringEquals = { "ssm:resourceTag/JobFunnelRole" = "node" } }
+        Condition = { StringEquals = { "ssm:resourceTag/${local.node_tag_key}" = local.node_tag_value } }
+      },
+      {
+        # The auto scaling group replaces the instance, so the pipeline finds its current id by tag.
+        Sid      = "FindTheNode"
+        Effect   = "Allow"
+        Action   = "ec2:DescribeInstances"
+        Resource = "*"
       },
       {
         # Lets the pipeline wait for the command and fail when the deployment fails.

@@ -69,6 +69,7 @@ run "the_deploy_role_may_only_push_images_and_send_the_remote_command" {
       "ecr:PutImage",
       "ssm:SendCommand",
       "ssm:GetCommandInvocation",
+      "ec2:DescribeInstances",
     ])
     error_message = "The deploy role must be able to push images and send the remote command, and nothing else."
   }
