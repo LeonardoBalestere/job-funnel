@@ -1,0 +1,9 @@
+# Copy to terraform.tfvars and fill in.
+region            = "us-east-1"
+availability_zone = "us-east-1a"
+hosted_zone_name  = "example.com"
+api_hostname      = "api.example.com"
+
+# Optional. A minor channel, such as "v1.34", keeps a replacement instance from jumping minor
+# versions over the existing cluster data.
+# k3s_channel = "stable"

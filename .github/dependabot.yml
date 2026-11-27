@@ -19,3 +19,12 @@ updates:
     groups:
       actions:
         patterns: ["*"]
+
+  - package-ecosystem: terraform
+    directories: [/infra/base, /infra/bootstrap]
+    schedule:
+      interval: weekly
+      day: monday
+    groups:
+      terraform:
+        patterns: ["*"]

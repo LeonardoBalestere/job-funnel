@@ -1,0 +1,12 @@
+# Provider downloads
+.terraform/
+
+# State stays in the remote backend; the bootstrap's local state is kept by the owner, not in git
+*.tfstate
+*.tfstate.*
+*.tfplan
+
+# Account- and domain-specific values; the .example files show their shape
+backend.hcl
+*.tfvars
+!*.tfvars.example

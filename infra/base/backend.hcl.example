@@ -1,0 +1,3 @@
+# Copy to backend.hcl and pass it to `terraform init -backend-config=backend.hcl`.
+bucket = "job-funnel-tfstate-111122223333"
+region = "us-east-1"

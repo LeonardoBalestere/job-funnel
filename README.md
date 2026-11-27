@@ -12,6 +12,7 @@ It has one real user and a public, read-only demonstration mode with fictitious 
 - [Decisions](./docs/adr/): why the system is built this way
 - [Roadmap](./docs/roadmap.md): the order in which it is built
 - [Quality gate](./docs/quality-gate.md): the checks a pull request must pass, and their setup
+- [Infrastructure](./infra/README.md): the Terraform for the permanent environment, and how to apply it
 
 ## Running locally
 
